@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CheckRonda · Painel do gestor</title>
+<style>
+:root{--bg:#F3F2F8;--sf:#fff;--sf2:#EBEAF2;--tx:#14161C;--mu:#6A7080;--ln:#E2E1EA;--br:#2450E6;--brt:#2450E6;--ok:#12945F;--late:#E5384D;--amb:#D98E1F;--teal:#0E9F9A}
+@media(prefers-color-scheme:dark){:root{--bg:#0E1015;--sf:#181B22;--sf2:#20242D;--tx:#F4F5F8;--mu:#9AA1B2;--ln:#2A2F3A;--brt:#7C9BFF;--ok:#35D08A;--late:#FF6B7A;--amb:#F0A83A;--teal:#2CC7C0}.l-cla{display:none!important}.l-esc{display:inline!important}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+h1{font-size:26px;margin:0}h3{margin:0 0 14px;font-size:20px}h4{margin:18px 0 10px}
+.mu{color:var(--mu)}.l-esc{display:none}.l-cla{display:inline}
+#app{min-height:100vh}
+.shell{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+.side{background:var(--sf);border-right:1px solid var(--ln);padding:20px 14px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;margin:0 6px 18px}
+.tile{width:36px;height:36px;border-radius:12px;background:#2450E6;display:grid;place-items:center;flex:none}
+.nav{display:flex;flex-direction:column;gap:4px}
+.nav button{all:unset;cursor:pointer;padding:11px 12px;border-radius:12px;font-weight:600;color:var(--mu)}
+.nav button:hover{background:var(--sf2)}.nav button.on{background:var(--br);color:#fff}
+.side .fim{margin-top:auto;font-size:12px;color:var(--mu);display:grid;gap:10px;padding:0 6px}
+.cred img{height:20px;display:block;margin-top:4px}
+.main{padding:26px 30px;max-width:1240px;width:100%}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:20px;padding:18px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
+.kpi{border-radius:20px;padding:16px;background:var(--sf);border:1px solid var(--ln)}
+.kpi b{display:block;font-size:30px;line-height:1.1}.kpi span{font-size:13px;color:var(--mu)}
+.kpi.ok{background:color-mix(in srgb,var(--ok) 14%,var(--sf))}.kpi.late{background:color-mix(in srgb,var(--late) 14%,var(--sf))}.kpi.amb{background:color-mix(in srgb,var(--amb) 14%,var(--sf))}.kpi.br{background:var(--br);color:#fff;border-color:transparent}.kpi.br span{color:#ffffffbb}
+.btn{all:unset;cursor:pointer;padding:10px 16px;border-radius:14px;font-weight:700;border:1.5px solid var(--ln);background:var(--sf);font-size:14px}
+.btn:hover{background:var(--sf2)}.btn.pri{background:var(--br);color:#fff;border-color:transparent}.btn.pri:hover{filter:brightness(1.1)}.btn.sm{padding:6px 10px;font-size:13px;border-radius:10px}.btn.red{color:var(--late)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chips .btn.on{background:var(--br);color:#fff;border-color:transparent}
+input,select,textarea{font:inherit;color:inherit;background:var(--sf2);border:1.5px solid transparent;border-radius:14px;padding:11px 14px;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brt)}
+label{display:grid;gap:5px;font-size:13px;font-weight:600;color:var(--mu);margin-bottom:12px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.filtros{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin-bottom:14px;padding:12px}
+.tbl{padding:0;overflow:auto}table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.04em;padding:12px 14px;border-bottom:1px solid var(--ln);white-space:nowrap}
+td{padding:11px 14px;border-bottom:1px solid var(--ln);vertical-align:middle}tr:last-child td{border:0}tr[data-a]{cursor:pointer}tr[data-a]:hover td{background:var(--sf2)}
+.chip{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700;background:var(--sf2)}
+.chip.ok{color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,transparent)}.chip.atrasada,.chip.late{color:var(--late);background:color-mix(in srgb,var(--late) 15%,transparent)}.chip.amb,.chip.reposicao,.chip.media{color:var(--amb);background:color-mix(in srgb,var(--amb) 16%,transparent)}.chip.limpeza,.chip.baixa{color:var(--teal);background:color-mix(in srgb,var(--teal) 16%,transparent)}.chip.alta{color:var(--late);background:color-mix(in srgb,var(--late) 15%,transparent)}.chip.concluida,.chip.resolvida{color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,transparent)}
+.bar{margin-bottom:12px}.bar .t{display:flex;justify-content:space-between;gap:10px;font-size:14px;font-weight:600}.bar .t small{color:var(--mu);font-weight:500}
+.bar i{display:block;height:10px;border-radius:6px;background:var(--sf2);margin-top:5px;overflow:hidden}.bar i s{display:block;height:100%;border-radius:6px;background:var(--c,var(--br))}
+.dias{display:flex;align-items:flex-end;gap:8px;height:150px}.dias div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;height:100%;font-size:12px}.dias i{display:block;width:100%;border-radius:8px;background:var(--br);min-height:4px}.dias i.z{background:var(--ln)}
+.fotos{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fotos img{width:100%;border-radius:14px;max-height:260px;object-fit:cover;cursor:zoom-in}
+.item{border:1px solid var(--ln);border-radius:18px;padding:16px;background:var(--sf);margin-bottom:12px}
+dialog{border:0;border-radius:24px;padding:24px;width:min(560px,94vw);background:var(--sf);color:var(--tx);box-shadow:0 20px 60px #0006}dialog::backdrop{background:#000a}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:12px 20px;border-radius:14px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:99}#toast.on{opacity:1}
+.login{min-height:100vh;display:grid;place-items:center;padding:20px}.login .card{width:min(420px,100%);padding:30px}.login h2{font-size:32px;margin:18px 0 6px}.erro{color:var(--late);font-weight:600;margin:10px 0}
+.setup{max-width:720px;margin:40px auto;padding:0 20px}.setup code,.setup pre{background:var(--sf2);border-radius:10px;padding:2px 6px}.setup pre{padding:14px;overflow:auto}
+@media(max-width:860px){.shell{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center}.brand{margin:0 8px 0 0}.nav{flex-direction:row;overflow-x:auto}.side .fim{display:none}.main{padding:18px}.filtros{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr}}
+@media print{.side,.noprint,#toast{display:none!important}.shell{display:block}.main{padding:0}body{background:#fff;color:#000}.card,.kpi{border:1px solid #ccc;background:#fff!important;color:#000!important}.kpi.br{color:#000}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<dialog id="dlg"></dialog>
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, sendPasswordResetEmail, createUserWithEmailAndPassword, updateProfile, deleteUser } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
+import { getFirestore, collection, doc, onSnapshot, setDoc, updateDoc, deleteDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
+
+/* ====== CONFIGURAÇÃO DO FIREBASE (Integrada) ====== */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCh1npvbvvfraSyVxbrl7TbE4XSkwK6cEA",
+  authDomain: "checkronda-34b28.firebaseapp.com",
+  projectId: "checkronda-34b28",
+  storageBucket: "checkronda-34b28.firebasestorage.app",
+  messagingSenderId: "603646505526",
+  appId: "1:603646505526:web:998371d1de582df3f55e97"
+};
+const DB_ID = 'checkronda-34b28';          // mesmo banco do aplicativo
+/* ======================================================================== */
+
+const LOGO_APP = `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/><rect x="7.5" y="7.5" width="3" height="3" rx=".6" fill="#fff" stroke="none"/><rect x="13.5" y="7.5" width="3" height="3" rx=".6" fill="#fff" stroke="none"/><rect x="7.5" y="13.5" width="3" height="3" rx=".6" fill="#fff" stroke="none"/><rect x="14" y="14" width="2.5" height="2.5" rx=".5" fill="#fff" stroke="none"/></svg>`;
+const CRED = `<div class="cred">Desenvolvido por<img class="l-esc" alt="AllCode" src="data:image/png;base64,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"><img class="l-cla" alt="AllCode" src="data:image/png;base64,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"></div>`;
+
+/* ---------- utilidades ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const p2 = n => String(n).padStart(2, '0');
+const isoLocal = d => `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}T${p2(d.getHours())}:${p2(d.getMinutes())}:${p2(d.getSeconds())}`;
+const dt = v => v ? new Date(v).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
+const dur = ms => { const s = Math.round(ms / 1000); if (s < 60) return s + ' s'; const m = Math.round(s / 60); return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h ' + (m % 60) + ' min'; };
+const efetivo = t => (t.status === 'pendente' && new Date(t.horarioPrevisto) < new Date()) ? 'atrasada' : t.status;
+const duracao = t => (t.horarioInicio && t.horarioConclusao) ? new Date(t.horarioConclusao) - new Date(t.horarioInicio) : null;
+const media = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
+const nomeDe = id => S.usuarios.find(u => u.id === id)?.nome || 'Ex-funcionário';
+const R_ST = { pendente: 'Pendente', atrasada: 'Em atraso', concluida: 'Concluída' };
+const R_OC = { aberta: 'Aberta', emAndamento: 'Em andamento', resolvida: 'Resolvida' };
+const R_PR = { baixa: 'Baixa', media: 'Média', alta: 'Alta' };
+const R_TP = { reposicao: 'Reposição', limpeza: 'Limpeza' };
+const erro = e => toast('Erro: ' + (e?.code || e?.message || e));
+let tt; function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 3200); }
+const dlg = $('#dlg');
+const abrir = h => { dlg.innerHTML = h; if (!dlg.open) dlg.showModal(); carregaFotos(dlg); };
+const fechar = () => dlg.open && dlg.close();
+
+/* ---------- estado ---------- */
+const S = { user: null, perfil: null, aviso: '', rota: 'painel', periodo: 7, f: { q: '', status: '', tipo: '', resp: '' }, fo: '', usuarios: [], tarefas: [], ocorrencias: [], locais: [], avisos: [] };
+let app, auth, db, subs = [], raf;
+const configurado = !Object.values(FIREBASE_CONFIG).some(v => String(v).startsWith('COLE'));
+
+/* ---------- fotos (guardadas no Firestore, coleção "fotos") ---------- */
+const cacheFoto = new Map();
+async function fotoSrc(ref) {
+  if (!ref) return null;
+  if (ref.startsWith('foto:')) {
+    const id = ref.slice(5);
+    if (cacheFoto.has(id)) return cacheFoto.get(id);
+    const s = await getDoc(doc(db, 'fotos', id));
+    const src = s.exists() && s.data().dados ? 'data:image/jpeg;base64,' + s.data().dados : null;
+    cacheFoto.set(id, src); return src;
+  }
+  return ref.startsWith('http') ? ref : null;
+}
+async function carregaFotos(raiz) {
+  for (const img of raiz.querySelectorAll('img[data-foto]')) {
+    const src = await fotoSrc(img.dataset.foto).catch(() => null);
+    if (src) { img.src = src; img.hidden = false; }
+    else img.replaceWith(Object.assign(document.createElement('span'), { className: 'mu', textContent: 'Foto indisponível (ficou só no celular)' }));
+  }
+}
+const imgFoto = (ref, rot) => ref ? `<figure style="margin:0"><figcaption class="mu" style="font-size:12px;margin-bottom:4px">${rot}</figcaption><img data-foto="${esc(ref)}" data-a="ampliar" hidden alt="${rot}"></figure>` : '';
+
+/* ---------- telas de entrada ---------- */
+function telaConfig() {
+  $('#app').innerHTML = `<div class="setup"><div class="brand"><div class="tile">${LOGO_APP}</div>CheckRonda · Painel do gestor</div>
+  <h1>Falta ligar o site ao seu Firebase</h1>
+  <p>Abra este arquivo num editor de texto, procure <code>FIREBASE_CONFIG</code> no começo do script e troque os <code>COLE_AQUI</code> pelos dados do seu app Web:</p>
+  <ol><li>Console do Firebase → engrenagem → <b>Configurações do projeto</b> → aba <b>Geral</b>.</li><li>Em <b>Seus apps</b>, clique em <b>&lt;/&gt; (Web)</b> e registre um app chamado "Painel do gestor" (não precisa ativar o Hosting agora).</li><li>Copie <code>apiKey</code>, <code>authDomain</code>, <code>projectId</code> e <code>appId</code> para o arquivo.</li></ol>
+  <p class="mu">Esses dados identificam o projeto e não são segredo. Quem protege os dados são as regras do Firestore.</p></div>`;
+}
+function renderLogin(msg) {
+  const m = msg || S.aviso; S.aviso = '';
+  $('#app').innerHTML = `<div class="login"><div class="card"><div class="tile" style="width:64px;height:64px;border-radius:21px"><svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/><rect x="7.5" y="7.5" width="3" height="3" rx=".6" fill="#fff" stroke="none"/><rect x="13.5" y="7.5" width="3" height="3" rx=".6" fill="#fff" stroke="none"/><rect x="7.5" y="13.5" width="3" height="3" rx=".6" fill="#fff" stroke="none"/><rect x="14" y="14" width="2.5" height="2.5" rx=".5" fill="#fff" stroke="none"/></svg></div>
+  <h2>CheckRonda</h2><p class="mu" style="margin:0 0 20px">Painel do gestor. Entre com a mesma conta de gestor do aplicativo.</p>
+  <form data-form="login"><label>E-mail<input type="email" name="email" required autocomplete="username"></label><label>Senha<input type="password" name="senha" required autocomplete="current-password"></label>
+  ${m ? `<div class="erro">${esc(m)}</div>` : ''}
+  <button class="btn pri" style="width:100%;text-align:center;padding:14px">Entrar</button></form>
+  <button class="btn" style="width:100%;text-align:center;margin-top:10px;padding:13px" data-a="google">Continuar com o Google</button>
+  <p style="text-align:center;margin:14px 0 0"><a href="#" data-a="esqueci" class="mu">Esqueci minha senha</a></p><div style="margin-top:26px;text-align:center;font-size:12px" class="mu">${CRED}</div></div></div>`;
+}
+const MENU = [['painel', 'Painel'], ['tarefas', 'Tarefas'], ['ocorrencias', 'Ocorrências'], ['reposicao', 'Reposição'], ['equipe', 'Equipe'], ['locais', 'Locais e QR'], ['avisos', 'Avisos']];
+function renderShell() {
+  $('#app').innerHTML = `<div class="shell"><aside class="side"><div class="brand"><div class="tile">${LOGO_APP}</div>CheckRonda</div>
+  <nav class="nav">${MENU.map(([r, n]) => `<button data-a="rota" data-r="${r}">${n}</button>`).join('')}</nav>
+  <div class="fim"><div>${esc(S.perfil.nome)}<br><a href="#" data-a="sair" class="mu">Sair</a></div>${CRED}</div></aside><main class="main" id="view"></main></div>`;
+  render();
+}
+
+/* ---------- dados em tempo real ---------- */
+function desinscrever() { subs.forEach(u => u()); subs = []; }
+function assinar() {
+  const ouvir = (nome, chave) => subs.push(onSnapshot(collection(db, nome), s => { S[chave] = s.docs.map(d => ({ ...d.data(), id: d.id })); agenda(); }, erro));
+  ouvir('usuarios', 'usuarios'); ouvir('tarefas', 'tarefas'); ouvir('ocorrencias', 'ocorrencias'); ouvir('locais', 'locais'); ouvir('avisos', 'avisos');
+}
+const agenda = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(render); };
+
+/* ---------- telas ---------- */
+const bar = (rot, fr, txt, cor) => `<div class="bar"><div class="t"><span>${esc(rot)}</span><small>${esc(txt)}</small></div><i><s style="width:${Math.max(2, Math.min(100, fr * 100))}%;${cor ? `--c:${cor}` : ''}"></s></i></div>`;
+function tarefasPeriodo() {
+  if (S.periodo === 0) return S.tarefas;
+  const ini = new Date(); ini.setHours(0, 0, 0, 0); ini.setDate(ini.getDate() - (S.periodo - 1));
+  return S.tarefas.filter(t => new Date(t.horarioPrevisto) >= ini);
+}
+function vPainel(v) {
+  v.dataset.rota = '';
+  const ts = tarefasPeriodo(), conc = ts.filter(t => t.status === 'concluida');
+  const atr = ts.filter(t => efetivo(t) === 'atrasada').length, pen = ts.filter(t => efetivo(t) === 'pendente').length;
+  const taxa = ts.length ? Math.round(conc.length * 100 / ts.length) : 0;
+  const m = media(conc.map(duracao).filter(x => x != null));
+  const falta = S.tarefas.filter(t => t.produtoEmFalta).length, ocAb = S.ocorrencias.filter(o => o.status !== 'resolvida').length;
+  const por = {}; ts.forEach(t => (por[t.idResponsavel] ||= []).push(t));
+  const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+  const dias = [...Array(7)].map((_, i) => { const d = new Date(hoje); d.setDate(d.getDate() - (6 - i)); return d; });
+  const porDia = dias.map(d => S.tarefas.filter(t => t.status === 'concluida' && t.horarioConclusao && new Date(t.horarioConclusao).toDateString() === d.toDateString()).length);
+  const mx = Math.max(1, ...porDia);
+  const tl = {}; conc.forEach(t => { const d = duracao(t); if (d != null) (tl[t.local] ||= []).push(d); });
+  const medL = Object.entries(tl).map(([k, a]) => [k, media(a)]).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  const rec = [...S.tarefas].filter(t => t.status === 'concluida' && t.horarioConclusao).sort((a, b) => new Date(b.horarioConclusao) - new Date(a.horarioConclusao)).slice(0, 8);
+  v.innerHTML = `<div class="top"><h1>Painel</h1><div class="acts noprint"><div class="chips">${[[1, 'Hoje'], [7, '7 dias'], [30, '30 dias'], [0, 'Tudo']].map(([d, n]) => `<button class="btn sm ${S.periodo === d ? 'on' : ''}" data-a="periodo" data-v="${d}">${n}</button>`).join('')}</div><button class="btn sm" data-a="csv">Exportar CSV</button><button class="btn sm" data-a="imprimir">Imprimir</button></div></div>
+  <div class="kpis"><div class="kpi br"><b>${taxa}%</b><span>conclusão (${conc.length} de ${ts.length})</span></div><div class="kpi ok"><b>${conc.length}</b><span>concluídas</span></div><div class="kpi"><b>${pen}</b><span>pendentes</span></div><div class="kpi late"><b>${atr}</b><span>em atraso</span></div><div class="kpi amb"><b>${falta}</b><span>produtos em falta</span></div><div class="kpi"><b>${ocAb}</b><span>ocorrências abertas</span></div><div class="kpi"><b>${m == null ? '—' : dur(m)}</b><span>tempo médio por tarefa</span></div></div>
+  <div class="grid g2"><div class="card"><h4 style="margin-top:0">Por funcionário</h4>${Object.keys(por).length ? Object.entries(por).map(([id, a]) => { const c = a.filter(t => t.status === 'concluida').length, l = a.filter(t => efetivo(t) === 'atrasada').length; return bar(nomeDe(id), c / a.length, `${c}/${a.length} concluídas${l ? ` · ${l} em atraso` : ''}`, 'var(--ok)'); }).join('') : '<p class="mu">Sem tarefas no período.</p>'}</div>
+  <div class="card"><h4 style="margin-top:0">Concluídas nos últimos 7 dias</h4><div class="dias">${porDia.map((n, i) => `<div><b>${n}</b><i class="${n ? '' : 'z'}" style="height:${n ? 8 + 100 * n / mx : 4}px"></i><span class="mu">${p2(dias[i].getDate())}/${p2(dias[i].getMonth() + 1)}</span></div>`).join('')}</div></div>
+  <div class="card"><h4 style="margin-top:0">Tempo médio por local</h4>${medL.length ? medL.map(([k, ms]) => bar(k, ms / medL[0][1], dur(ms), 'var(--teal)')).join('') : '<p class="mu">Aparece depois das primeiras tarefas concluídas com check-in.</p>'}</div>
+  <div class="card"><h4 style="margin-top:0">Últimas conclusões</h4>${rec.length ? rec.map(t => `<div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--ln);cursor:pointer" data-a="verTarefa" data-id="${esc(t.id)}"><span><b>${esc(t.titulo)}</b><br><small class="mu">${esc(t.local)} · ${esc(nomeDe(t.idResponsavel))}</small></span><small class="mu">${dt(t.horarioConclusao)}</small></div>`).join('') : '<p class="mu">Nenhuma tarefa concluída ainda.</p>'}</div></div>`;
+}
+
+function vTarefas(v) {
+  if (v.dataset.rota !== 'tarefas') {
+    v.dataset.rota = 'tarefas';
+    v.innerHTML = `<div class="top"><h1>Tarefas</h1><div class="acts"><button class="btn" data-a="csv">Exportar CSV</button><button class="btn pri" data-a="novaTarefa">+ Nova tarefa</button></div></div>
+    <div class="card filtros"><input data-f="q" placeholder="Buscar por título ou local" value="${esc(S.f.q)}"><select data-f="status"><option value="">Todos os status</option>${Object.entries(R_ST).map(([k, n]) => `<option value="${k}">${n}</option>`).join('')}</select><select data-f="tipo"><option value="">Todos os tipos</option>${Object.entries(R_TP).map(([k, n]) => `<option value="${k}">${n}</option>`).join('')}</select><select data-f="resp"></select></div><div id="lista"></div>`;
+    v.querySelector('[data-f=status]').value = S.f.status; v.querySelector('[data-f=tipo]').value = S.f.tipo;
+  }
+  const sel = v.querySelector('[data-f=resp]');
+  sel.innerHTML = '<option value="">Todos os responsáveis</option>' + S.usuarios.filter(u => u.tipo === 'funcionario').map(u => `<option value="${esc(u.id)}">${esc(u.nome)}</option>`).join(''); sel.value = S.f.resp;
+  const q = S.f.q.toLowerCase();
+  const ts = [...S.tarefas].sort((a, b) => new Date(b.horarioPrevisto) - new Date(a.horarioPrevisto))
+    .filter(t => (!S.f.status || efetivo(t) === S.f.status) && (!S.f.tipo || t.tipo === S.f.tipo) && (!S.f.resp || t.idResponsavel === S.f.resp) && (!q || (t.titulo + ' ' + t.local).toLowerCase().includes(q)));
+  $('#lista').innerHTML = ts.length ? `<div class="card tbl"><table><tr><th>Horário</th><th>Título</th><th>Local</th><th>Responsável</th><th>Tipo</th><th>Status</th><th>Duração</th><th></th></tr>${ts.slice(0, 300).map(t => { const e = efetivo(t), d = duracao(t); return `<tr data-a="verTarefa" data-id="${esc(t.id)}"><td>${dt(t.horarioPrevisto)}</td><td><b>${esc(t.titulo)}</b>${t.produtoEmFalta ? ' <span class="chip amb">em falta</span>' : ''}</td><td>${esc(t.local)}</td><td>${esc(nomeDe(t.idResponsavel))}</td><td><span class="chip ${esc(t.tipo)}">${R_TP[t.tipo] || ''}</span></td><td><span class="chip ${e}">${R_ST[e] || ''}</span></td><td>${d != null ? dur(d) : '—'}</td><td><button class="btn sm red" data-a="delTarefa" data-id="${esc(t.id)}">Excluir</button></td></tr>`; }).join('')}</table></div>${ts.length > 300 ? '<p class="mu">Mostrando 300 tarefas. Use os filtros para refinar.</p>' : ''}` : '<p class="mu">Nenhuma tarefa encontrada.</p>';
+}
+
+function verTarefa(id) {
+  const t = S.tarefas.find(x => x.id === id); if (!t) return;
+  const e = efetivo(t), d = duracao(t);
+  const gps = t.latitudeCheckin != null ? `<a href="https://www.google.com/maps?q=${t.latitudeCheckin},${t.longitudeCheckin}" target="_blank" rel="noopener">${(+t.latitudeCheckin).toFixed(5)}, ${(+t.longitudeCheckin).toFixed(5)} (abrir no mapa)</a>` : '—';
+  abrir(`<h3>${esc(t.titulo)}</h3><p><span class="chip ${esc(t.tipo)}">${R_TP[t.tipo] || ''}</span> <span class="chip ${e}">${R_ST[e] || ''}</span> ${t.produtoEmFalta ? '<span class="chip amb">produto em falta</span>' : ''}</p>
+  <p class="mu" style="margin:0 0 12px">${esc(t.local)} · ${esc(nomeDe(t.idResponsavel))}</p>
+  <div class="row"><div><small class="mu">Previsto</small><br>${dt(t.horarioPrevisto)}</div><div><small class="mu">Concluído</small><br>${dt(t.horarioConclusao)}</div><div><small class="mu">Executada em</small><br>${d != null ? dur(d) : '—'}</div><div><small class="mu">Check-in por GPS</small><br>${gps}</div></div>
+  ${t.observacao ? `<h4>Observação</h4><p>${esc(t.observacao)}</p>` : ''}
+  ${(t.checklist || []).length ? `<h4>Checklist</h4>${t.checklist.map(i => `<div>${i.concluido ? '✅' : '⬜'} ${esc(i.titulo)}</div>`).join('')}` : ''}
+  ${t.fotoAntesPath || t.fotoDepoisPath ? `<h4>Fotos</h4><div class="fotos">${imgFoto(t.fotoAntesPath, 'Antes')}${imgFoto(t.fotoDepoisPath, 'Depois')}</div>` : ''}
+  <div class="acts" style="margin-top:18px;justify-content:flex-end"><button class="btn" data-a="fechar">Fechar</button></div>`);
+}
+
+function vOcorrencias(v) {
+  v.dataset.rota = '';
+  const lista = [...S.ocorrencias].sort((a, b) => new Date(b.dataAbertura) - new Date(a.dataAbertura)).filter(o => !S.fo || o.status === S.fo);
+  v.innerHTML = `<div class="top"><h1>Ocorrências</h1><div class="chips"><button class="btn sm ${!S.fo ? 'on' : ''}" data-a="filtroOc" data-v="">Todas</button>${Object.entries(R_OC).map(([k, n]) => `<button class="btn sm ${S.fo === k ? 'on' : ''}" data-a="filtroOc" data-v="${k}">${n}</button>`).join('')}</div></div>
+  ${lista.length ? lista.map(o => `<div class="item"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><span><span class="chip ${esc(o.prioridade || 'media')}">Prioridade ${(R_PR[o.prioridade] || 'Média').toLowerCase()}</span> <span class="chip ${esc(o.status)}">${R_OC[o.status] || ''}</span></span><select style="width:auto;padding:6px 10px" data-oc="${esc(o.id)}">${Object.entries(R_OC).map(([k, n]) => `<option value="${k}" ${o.status === k ? 'selected' : ''}>${n}</option>`).join('')}</select></div>
+  <h3 style="margin:10px 0 4px">${esc(o.titulo)}</h3><div class="mu" style="font-size:13px">${esc(o.local)} · ${esc(o.autorNome)} · ${dt(o.dataAbertura)}</div>${o.descricao ? `<p>${esc(o.descricao)}</p>` : ''}${o.tarefaTitulo ? `<p class="mu" style="font-size:13px">Tarefa relacionada: ${esc(o.tarefaTitulo)}</p>` : ''}${o.fotoPath ? `<div style="max-width:320px">${imgFoto(o.fotoPath, 'Foto')}</div>` : ''}</div>`).join('') : '<p class="mu">Nenhuma ocorrência por aqui.</p>'}`;
+  carregaFotos(v);
+}
+
+function vReposicao(v) {
+  v.dataset.rota = '';
+  const l = S.tarefas.filter(t => t.produtoEmFalta).sort((a, b) => new Date(b.horarioConclusao || b.horarioPrevisto) - new Date(a.horarioConclusao || a.horarioPrevisto));
+  v.innerHTML = `<div class="top"><h1>Lista de reposição</h1><button class="btn noprint" data-a="imprimir">Imprimir lista</button></div>${l.length ? l.map(t => `<div class="item" style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><div><b>${esc(t.local)}</b><br>${t.observacao ? esc(t.observacao) + '<br>' : ''}<small class="mu">${esc(nomeDe(t.idResponsavel))} · ${dt(t.horarioConclusao || t.horarioPrevisto)}</small></div><button class="btn noprint" data-a="reposto" data-id="${esc(t.id)}">Marcar como reposto</button></div>`).join('') : '<p class="mu">Nenhum produto em falta no momento.</p>'}`;
+}
+
+function vEquipe(v) {
+  v.dataset.rota = '';
+  const l = [...S.usuarios].sort((a, b) => a.tipo === b.tipo ? (a.nome || '').localeCompare(b.nome || '') : (a.tipo === 'gestor' ? -1 : 1));
+  v.innerHTML = `<div class="top"><h1>Equipe</h1><button class="btn pri" data-a="novaPessoa">+ Adicionar pessoa</button></div><div class="card tbl"><table><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Situação</th><th></th></tr>${l.map(u => { const eu = u.id === S.perfil.id, ativo = u.ativo !== false; return `<tr><td><b>${esc(u.nome)}</b></td><td>${esc(u.username)}</td><td>${u.tipo === 'gestor' ? 'Gestor' : 'Funcionário'}</td><td><span class="chip ${ativo ? 'ok' : 'late'}">${ativo ? 'Ativo' : 'Inativo'}</span>${!u.consentimentoEm && !eu ? ' <span class="chip amb">convite pendente</span>' : ''}</td><td style="text-align:right;white-space:nowrap">${eu ? '<span class="mu">Você</span>' : `${!u.consentimentoEm ? `<button class="btn sm" data-a="convite" data-email="${esc(u.username)}">Reenviar convite</button> ` : ''}<button class="btn sm" data-a="tipoU" data-id="${esc(u.id)}" data-v="${u.tipo === 'gestor' ? 'funcionario' : 'gestor'}">${u.tipo === 'gestor' ? 'Tornar funcionário' : 'Tornar gestor'}</button> <button class="btn sm ${ativo ? 'red' : ''}" data-a="ativo" data-id="${esc(u.id)}" data-v="${ativo ? '0' : '1'}">${ativo ? 'Desativar' : 'Reativar'}</button>`}</td></tr>`; }).join('')}</table></div>
+  <p class="mu">A pessoa cadastrada recebe um e-mail para criar a própria senha. Ninguém, nem você, vê a senha dela.</p>`;
+}
+
+function vLocais(v) {
+  v.dataset.rota = '';
+  const l = [...S.locais].sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+  v.innerHTML = `<div class="top"><h1>Locais e QR Codes</h1><button class="btn pri" data-a="novoLocal">+ Novo local</button></div>${l.length ? `<div class="card tbl"><table><tr><th>Local</th><th>GPS</th><th></th></tr>${l.map(x => `<tr><td><b>${esc(x.nome)}</b></td><td>${x.latitude != null ? `<a href="https://www.google.com/maps?q=${x.latitude},${x.longitude}" target="_blank" rel="noopener">${(+x.latitude).toFixed(5)}, ${(+x.longitude).toFixed(5)}</a>` : '<span class="mu">sem posição</span>'}</td><td style="text-align:right"><button class="btn sm" data-a="verQr" data-id="${esc(x.id)}">Ver / imprimir QR</button> <button class="btn sm red" data-a="delLocal" data-id="${esc(x.id)}">Excluir</button></td></tr>`).join('')}</table></div>` : '<p class="mu">Cadastre os locais para gerar os QR Codes das tarefas.</p>'}
+  <p class="mu">Dica: se o local for cadastrado por aqui, informe a posição (latitude e longitude) para o aplicativo conferir o GPS no check-in. O jeito mais fácil é cadastrar o local pelo próprio aplicativo, estando no lugar.</p>`;
+}
+
+function vAvisos(v) {
+  v.dataset.rota = '';
+  const l = [...S.avisos].sort((a, b) => new Date(b.data) - new Date(a.data));
+  v.innerHTML = `<div class="top"><h1>Avisos</h1><button class="btn pri" data-a="novoAviso">+ Novo aviso</button></div>${l.length ? l.map(a => `<div class="item" style="display:flex;justify-content:space-between;gap:12px"><div><b>${esc(a.titulo)}</b><br>${esc(a.mensagem)}<br><small class="mu">${esc(a.autor)} · ${dt(a.data)}</small></div><button class="btn sm red" data-a="delAviso" data-id="${esc(a.id)}">Excluir</button></div>`).join('') : '<p class="mu">Nenhum aviso publicado. Os avisos aparecem no mural do aplicativo.</p>'}`;
+}
+const VIEWS = { painel: vPainel, tarefas: vTarefas, ocorrencias: vOcorrencias, reposicao: vReposicao, equipe: vEquipe, locais: vLocais, avisos: vAvisos };
+function render() {
+  if (!S.user) return;
+  document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('on', b.dataset.r === S.rota));
+  VIEWS[S.rota]($('#view'));
+}
+
+/* ---------- janelas (formulários) ---------- */
+const agoraLocal = () => { const d = new Date(); d.setMinutes(d.getMinutes() + 30); return isoLocal(d).slice(0, 16); };
+const btns = (ok) => `<div class="acts" style="justify-content:flex-end;margin-top:8px"><button type="button" class="btn" data-a="fechar">Cancelar</button><button class="btn pri">${ok}</button></div>`;
+function dlgTarefa() {
+  const funcs = S.usuarios.filter(u => u.tipo === 'funcionario' && u.ativo !== false);
+  if (!S.locais.length || !funcs.length) return toast('Cadastre ao menos um local e um funcionário antes.');
+  abrir(`<h3>Nova tarefa</h3><form data-form="tarefa"><label>Título<input name="titulo" required></label>
+  <label>Local<select name="local" required>${[...S.locais].sort((a, b) => a.nome.localeCompare(b.nome)).map(l => `<option value="${esc(l.id)}">${esc(l.nome)}</option>`).join('')}</select></label>
+  <div class="row"><label>Tipo<select name="tipo"><option value="limpeza">Limpeza</option><option value="reposicao">Reposição</option></select></label><label>Responsável<select name="resp" required>${funcs.map(u => `<option value="${esc(u.id)}">${esc(u.nome)}</option>`).join('')}</select></label></div>
+  <label>Horário previsto<input type="datetime-local" name="hora" required value="${agoraLocal()}"></label>
+  <label>Checklist (um item por linha)<textarea name="check" rows="4" placeholder="Ex.: Varrer o corredor"></textarea></label>${btns('Salvar e atribuir')}</form>`);
+}
+function dlgPessoa() { abrir(`<h3>Adicionar pessoa</h3><form data-form="pessoa"><label>Nome completo<input name="nome" required></label><label>E-mail<input type="email" name="email" required></label><label>Perfil<select name="tipo"><option value="funcionario">Funcionário</option><option value="gestor">Gestor</option></select></label><p class="mu" style="font-size:13px">A pessoa recebe um e-mail para criar a própria senha.</p>${btns('Cadastrar e enviar convite')}</form>`); }
+function dlgLocal() {
+  abrir(`<h3>Novo local</h3><form data-form="local"><label>Nome do local<input name="nome" required placeholder="Ex.: Corredor 4"></label><div class="row"><label>Latitude (opcional)<input name="lat" inputmode="decimal"></label><label>Longitude (opcional)<input name="lng" inputmode="decimal"></label></div><button type="button" class="btn sm" data-a="minhaPos" style="margin-bottom:12px">Usar minha posição atual</button>${btns('Salvar e gerar QR')}</form>`);
+}
+function dlgAviso() { abrir(`<h3>Novo aviso</h3><form data-form="aviso"><label>Título<input name="titulo" required></label><label>Mensagem<textarea name="msg" rows="4" required></textarea></label>${btns('Publicar')}</form>`); }
+function dlgQr(l) {
+  abrir(`<h3>${esc(l.nome)}</h3><div style="display:grid;place-items:center;padding:10px"><div id="qrbox" style="background:#fff;padding:12px;border-radius:12px"></div></div><p class="mu" style="text-align:center;font-size:13px">Imprima e fixe no local. O código é único e só vale para este local.</p><div class="acts" style="justify-content:center"><button class="btn pri" data-a="imprimirQr" data-nome="${esc(l.nome)}">Imprimir</button><button class="btn" data-a="fechar">Fechar</button></div>`);
+  new QRCode($('#qrbox'), { text: l.codigoQr, width: 220, height: 220 });
+}
+
+const senhaAleatoria = () => { const L = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#%'; const a = new Uint32Array(24); crypto.getRandomValues(a); return [...a].map(n => L[n % L.length]).join(''); };
+const novoCodigo = () => { const L = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; const a = new Uint32Array(10); crypto.getRandomValues(a); return 'CR-' + [...a].map(n => L[n % L.length]).join(''); };
+
+const FORMS = {
+  async login(d) {
+    try { await signInWithEmailAndPassword(auth, d.email.trim(), d.senha); }
+    catch (e) { renderLogin(['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found'].includes(e.code) ? 'E-mail ou senha incorretos.' : 'Não foi possível entrar: ' + (e.code || e.message)); }
+  },
+  async tarefa(d) {
+    const loc = S.locais.find(l => l.id === d.local), id = String(Date.now());
+    const checklist = d.check.split('\n').map(s => s.trim()).filter(Boolean).map(titulo => ({ titulo, concluido: false }));
+    await setDoc(doc(db, 'tarefas', id), { id, titulo: d.titulo.trim(), local: loc.nome, qrCodeEsperado: loc.codigoQr, tipo: d.tipo, horarioPrevisto: d.hora.length === 16 ? d.hora + ':00' : d.hora, idResponsavel: d.resp, status: 'pendente', checklist: checklist.length ? checklist : [{ titulo: 'Verificação padrão', concluido: false }], observacao: null, fotoAntesPath: null, fotoDepoisPath: null, produtoEmFalta: false, horarioConclusao: null, latitudeCheckin: null, longitudeCheckin: null, latitudeLocal: loc.latitude ?? null, longitudeLocal: loc.longitude ?? null, idModelo: null, horarioInicio: null });
+    const n = doc(collection(db, 'notificacoes'));
+    await setDoc(n, { id: n.id, idUsuario: d.resp, titulo: 'Nova Atividade Atribuída!', mensagem: `Você recebeu a tarefa "${d.titulo.trim()}" no local ${loc.nome}.`, data: isoLocal(new Date()), lida: false });
+    fechar(); toast('Tarefa criada e atribuída');
+  },
+  async pessoa(d, f) {
+    const btn = f.querySelector('.pri'); btn.disabled = true; btn.textContent = 'Cadastrando...';
+    const email = d.email.trim().toLowerCase();
+    const sec = getApps().find(a => a.name === 'cadastro') || initializeApp(FIREBASE_CONFIG, 'cadastro');
+    const as = getAuth(sec); as.languageCode = 'pt-BR';
+    try {
+      const c = await createUserWithEmailAndPassword(as, email, senhaAleatoria());
+      await updateProfile(c.user, { displayName: d.nome.trim() });
+      await setDoc(doc(db, 'usuarios', c.user.uid), { id: c.user.uid, nome: d.nome.trim(), username: email, senha: '', tipo: d.tipo, fotoPath: null, ativo: true, consentimentoEm: null });
+      await sendPasswordResetEmail(as, email);
+      fechar(); toast('Cadastro criado. Convite enviado para ' + email);
+    } catch (e) { btn.disabled = false; btn.textContent = 'Cadastrar e enviar convite'; toast(e.code === 'auth/email-already-in-use' ? 'Este e-mail já tem cadastro. Use "Reenviar convite" na lista.' : 'Erro: ' + (e.code || e.message)); }
+    finally { await signOut(as).catch(() => { }); }
+  },
+  async local(d) {
+    const r = doc(collection(db, 'locais')), lat = parseFloat(String(d.lat).replace(',', '.')), lng = parseFloat(String(d.lng).replace(',', '.'));
+    const l = { nome: d.nome.trim(), codigoQr: novoCodigo(), latitude: isNaN(lat) ? null : lat, longitude: isNaN(lng) ? null : lng };
+    await setDoc(r, l); toast('Local salvo'); dlgQr({ id: r.id, ...l });
+  },
+  async aviso(d) {
+    const id = String(Date.now());
+    await setDoc(doc(db, 'avisos', id), { id, titulo: d.titulo.trim(), mensagem: d.msg.trim(), data: isoLocal(new Date()), autor: S.perfil.nome });
+    fechar(); toast('Aviso publicado');
+  }
+};
+
+/* ---------- exportar / imprimir ---------- */
+function exportaCsv() {
+  const cel = c => { let s = String(c ?? ''); if (/^[=+\-@]/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };
+  const f = v => v ? isoLocal(new Date(v)).replace('T', ' ') : '';
+  const cab = ['Título', 'Local', 'Responsável', 'Tipo', 'Status', 'Previsto', 'Início', 'Concluído', 'Duração', 'Produto em falta', 'Observação', 'Latitude check-in', 'Longitude check-in'];
+  const lin = tarefasPeriodo().map(t => { const d = duracao(t); return [t.titulo, t.local, nomeDe(t.idResponsavel), R_TP[t.tipo], R_ST[efetivo(t)], f(t.horarioPrevisto), f(t.horarioInicio), f(t.horarioConclusao), d != null ? dur(d) : '', t.produtoEmFalta ? 'Sim' : 'Não', t.observacao, t.latitudeCheckin, t.longitudeCheckin]; });
+  const csv = '\ufeff' + [cab, ...lin].map(l => l.map(cel).join(';')).join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = 'checkronda-tarefas.csv'; a.click();
+}
+
+/* ---------- ações (cliques) ---------- */
+const A = {
+  rota: b => { S.rota = b.r; $('#view').dataset.rota = ''; render(); },
+  periodo: b => { S.periodo = +b.v; render(); },
+  sair: () => signOut(auth),
+  fechar,
+  ampliar: (b, el) => { const w = window.open(); if (w) { w.document.write(`<title>Foto</title><body style="margin:0;background:#000;display:grid;place-items:center;min-height:100vh"><img src="${el.src}" style="max-width:100%;max-height:100vh">`); w.document.close(); } },
+  csv: exportaCsv, imprimir: () => window.print(),
+  verTarefa: b => verTarefa(b.id), novaTarefa: dlgTarefa,
+  delTarefa: async b => { if (confirm('Excluir esta tarefa para todos? Isso não pode ser desfeito.')) deleteDoc(doc(db, 'tarefas', b.id)).then(() => toast('Tarefa excluída')).catch(erro); },
+  filtroOc: b => { S.fo = b.v; render(); },
+  reposto: b => updateDoc(doc(db, 'tarefas', b.id), { produtoEmFalta: false }).then(() => toast('Marcado como reposto')).catch(erro),
+  novaPessoa: dlgPessoa,
+  convite: b => sendPasswordResetEmail(auth, b.email).then(() => toast('Convite reenviado para ' + b.email)).catch(erro),
+  tipoU: b => confirm(b.v === 'gestor' ? 'Esta pessoa passará a ver os dados de todos. Confirmar?' : 'Esta pessoa deixará de ser gestora. Confirmar?') && updateDoc(doc(db, 'usuarios', b.id), { tipo: b.v }).catch(erro),
+  ativo: b => (b.v === '1' || confirm('A pessoa perde o acesso ao app e ao painel. Você pode reativar depois. Desativar?')) && updateDoc(doc(db, 'usuarios', b.id), { ativo: b.v === '1' }).catch(erro),
+  novoLocal: dlgLocal,
+  minhaPos: () => navigator.geolocation?.getCurrentPosition(p => { const f = $('form[data-form=local]'); f.lat.value = p.coords.latitude.toFixed(6); f.lng.value = p.coords.longitude.toFixed(6); toast('Posição preenchida'); }, () => toast('Não foi possível obter a posição.')),
+  verQr: b => { const l = S.locais.find(x => x.id === b.id); if (l) dlgQr(l); },
+  delLocal: b => confirm('Excluir este local? Tarefas já criadas continuam com o QR antigo.') && deleteDoc(doc(db, 'locais', b.id)).catch(erro),
+  imprimirQr: b => { const c = $('#qrbox canvas'), src = c ? c.toDataURL('image/png') : $('#qrbox img').src; const w = window.open(); if (!w) return toast('Libere pop-ups para imprimir.'); w.document.write(`<title>QR</title><body style="font-family:sans-serif;text-align:center;padding:40px"><h2>CHECK-IN RONDA · LOCALIZAÇÃO</h2><h1>${esc(b.nome)}</h1><img src="${src}" width="320"><script>onload=()=>print()<\/script>`); w.document.close(); },
+  novoAviso: dlgAviso,
+  delAviso: b => confirm('Excluir este aviso?') && deleteDoc(doc(db, 'avisos', b.id)).catch(erro),
+  google: async () => { try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (e) { if (e.code !== 'auth/popup-closed-by-user') renderLogin('Não foi possível entrar com o Google: ' + (e.code || e.message)); } },
+  esqueci: async () => { const e = prompt('Digite o e-mail da sua conta:'); if (e) sendPasswordResetEmail(auth, e.trim()).then(() => toast('Se o e-mail tiver conta, enviamos o link para criar a senha.')).catch(erro); }
+};
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-a]'); if (!el) return;
+  if (el.tagName === 'A') e.preventDefault();
+  A[el.dataset.a]?.(el.dataset, el);
+});
+document.addEventListener('input', e => { const k = e.target.dataset?.f; if (k) { S.f[k] = e.target.value; render(); } });
+document.addEventListener('change', e => {
+  const k = e.target.dataset?.f; if (k) { S.f[k] = e.target.value; render(); }
+  if (e.target.dataset?.oc) updateDoc(doc(db, 'ocorrencias', e.target.dataset.oc), { status: e.target.value }).then(() => toast('Status atualizado')).catch(erro);
+});
+document.addEventListener('submit', async e => {
+  const f = e.target, k = f.dataset?.form; if (!k) return;
+  e.preventDefault();
+  try { await FORMS[k](Object.fromEntries(new FormData(f)), f); } catch (err) { erro(err); }
+});
+
+/* ---------- início ---------- */
+if (!configurado) telaConfig();
+else {
+  app = initializeApp(FIREBASE_CONFIG); auth = getAuth(app); auth.languageCode = 'pt-BR'; db = getFirestore(app, DB_ID);
+  renderLogin();
+  onAuthStateChanged(auth, async u => {
+    desinscrever();
+    if (!u) { S.user = null; S.perfil = null; renderLogin(); return; }
+    try {
+      const s = await getDoc(doc(db, 'usuarios', u.uid));
+      const p = s.exists() ? { ...s.data(), id: s.id } : null;
+      if (!p || p.tipo !== 'gestor' || p.ativo === false) {
+        S.aviso = !p ? 'Este e-mail não está cadastrado no CheckRonda. Fale com o gestor.' : (p.ativo === false ? 'Conta desativada.' : 'Este painel é só para gestores.');
+        if (!p) await deleteUser(u).catch(() => { });
+        await signOut(auth); return;
+      }
+      S.user = u; S.perfil = p; renderShell(); assinar();
+    } catch (err) { S.aviso = 'Não foi possível verificar o acesso: ' + (err.code || err.message); await signOut(auth); }
+  });
+}
+</script>
+</body>
+</html>
